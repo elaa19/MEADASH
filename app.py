@@ -2,14 +2,19 @@ import streamlit as st
 import pandas as pd
 import time
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
+import pytz # Standard in Streamlit environments
 
 # --- 1. CONFIG & SETTINGS ---
 st.set_page_config(page_title="MEDINA COMMAND CENTER", layout="wide", initial_sidebar_state="collapsed")
 
-# Updated Timestamps
-START_TIME = datetime(2026, 4, 3, 14, 0, 0)
-END_TIME = datetime(2026, 4, 3, 17, 0, 0)
+# SET TIMEZONE TO TUNISIA
+local_tz = pytz.timezone('Africa/Tunis')
+
+# Define target times in local timezone
+START_TIME = local_tz.localize(datetime(2026, 4, 3, 14, 0, 0))
+END_TIME = local_tz.localize(datetime(2026, 4, 3, 17, 0, 0))
+
 CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSecPqsX3fiOFwv9YnIU2-3EGTJeZx5wMxjoEZ2UYk-JJ8iRjgc-hXl5MRv3U5UWKCtzBIlhtqJUKsG/pub?gid=0&single=true&output=csv"
 
 LOGO_URL = "logo.png" 
@@ -24,7 +29,7 @@ MOTIVATION = [
 if 'last_count' not in st.session_state:
     st.session_state.last_count = 0
 
-# --- 2. CSS STYLING (WITH UPDATED NUMBER COLORS) ---
+# --- 2. CSS STYLING ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Montserrat:wght@400;700&display=swap');
@@ -78,7 +83,6 @@ st.markdown(f"""
         opacity: 0.8;
     }}
 
-    /* CARDS */
     .total-card, .dept-card {{
         background-color: #ffffff !important;
         border-radius: 20px;
@@ -94,12 +98,10 @@ st.markdown(f"""
         font-weight: 700; 
     }}
 
-    /* NUMBER COLORS */
     .num-contacted {{ color: #001f3f !important; font-family: 'Orbitron'; font-size: 6rem; line-height: 1; font-weight: 700; }}
     .num-accepted {{ color: #007bff !important; font-family: 'Orbitron'; font-size: 6rem; line-height: 1; font-weight: 700; }}
     .num-approved {{ color: #10b981 !important; font-family: 'Orbitron'; font-size: 6rem; line-height: 1; font-weight: 700; }}
 
-    /* DEPT SPECIFIC ADJUSTMENTS */
     .dept-card h2 {{ font-size: 2.5rem; margin-bottom: 10px; }}
     .dept-num {{ font-size: 3.5rem !important; }}
     .stat-label {{ color: #4b5563 !important; font-weight: 700; font-size: 1.1rem; text-transform: uppercase; font-family: 'Montserrat'; }}
@@ -135,8 +137,9 @@ st.markdown(f"""
     </style>
     """, unsafe_allow_html=True)
 
-# --- 3. ALIGNED HEADER ---
-now = datetime.now()
+# --- 3. ALIGNED HEADER (TIMEZONE FIXED) ---
+now = datetime.now(local_tz)
+
 if now < START_TIME:
     diff = START_TIME - now
     label, color = "STARTING IN", "#007bff"
@@ -197,7 +200,6 @@ try:
                 </div>
             """, unsafe_allow_html=True)
             st.balloons()
-            st.markdown('<audio autoplay><source src="https://www.myinstants.com/media/sounds/victory-mario-series-hq.mp3" type="audio/mpeg"></audio>', unsafe_allow_html=True)
             time.sleep(10)
             st.rerun()
 
@@ -218,7 +220,7 @@ try:
         st.markdown(f'<div class="total-card"><h3>TOTAL APPROVALS</h3><p class="num-approved">{total_app}</p></div>', unsafe_allow_html=True)
 
     # DEPARTMENT STANDINGS
-    st.markdown("<br><h2 style='color:#ffffff; text-shadow: 0 0 10px #ffffff; text-align:center; font-family:Orbitron; font-size:3rem;'>DEPARTMENT STANDINGS</h2>", unsafe_allow_html=True)
+    st.write("<br>", unsafe_allow_html=True)
     d_cols = st.columns(4)
     for i, d in enumerate(['OGT', 'OGV', 'IGT', 'IGV']):
         with d_cols[i]:
