@@ -7,6 +7,7 @@ from datetime import datetime
 # --- 1. CONFIG & SETTINGS ---
 st.set_page_config(page_title="MEDINA COMMAND CENTER", layout="wide", initial_sidebar_state="collapsed")
 
+# Updated Timestamps
 START_TIME = datetime(2026, 4, 3, 14, 0, 0)
 END_TIME = datetime(2026, 4, 3, 17, 0, 0)
 CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSecPqsX3fiOFwv9YnIU2-3EGTJeZx5wMxjoEZ2UYk-JJ8iRjgc-hXl5MRv3U5UWKCtzBIlhtqJUKsG/pub?gid=0&single=true&output=csv"
@@ -23,7 +24,7 @@ MOTIVATION = [
 if 'last_count' not in st.session_state:
     st.session_state.last_count = 0
 
-# --- 2. CSS STYLING ---
+# --- 2. CSS STYLING (WITH UPDATED NUMBER COLORS) ---
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Montserrat:wght@400;700&display=swap');
@@ -77,7 +78,8 @@ st.markdown(f"""
         opacity: 0.8;
     }}
 
-    .total-card {{
+    /* CARDS */
+    .total-card, .dept-card {{
         background-color: #ffffff !important;
         border-radius: 20px;
         padding: 30px;
@@ -85,22 +87,23 @@ st.markdown(f"""
         box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
         border: 4px solid #ffffff;
     }}
-    .total-card h3 {{ color: #001f3f !important; font-family: 'Montserrat', sans-serif; font-weight: 700; margin-bottom: 5px !important; font-size: 1.8rem !important; }}
-    .total-card h1 {{ font-family: 'Orbitron', sans-serif; margin: 0 !important; font-size: 7rem !important; line-height: 1; }}
-
-    .dept-card {{
-        background-color: #ffffff !important;
-        border-radius: 15px;
-        padding: 20px;
-        text-align: center;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-        border: 3px solid #007bff;
-        height: 100%;
+    
+    .total-card h3, .dept-card h2 {{ 
+        color: #001f3f !important; 
+        font-family: 'Orbitron', sans-serif; 
+        font-weight: 700; 
     }}
-    .dept-card h2 {{ color: #001f3f !important; margin: 0 !important; font-size: 2.5rem !important; font-family: 'Orbitron'; }}
-    .dept-card .stat-val {{ margin: 0 !important; font-size: 3.8rem !important; font-family: 'Orbitron'; line-height: 1.1; }}
-    .dept-card .stat-label {{ color: #1a1a1a !important; margin: 0 !important; font-weight: 700; font-size: 1.1rem; text-transform: uppercase; }}
-    .dept-card hr {{ border: 1.5px solid #eee; margin: 15px 0; }}
+
+    /* NUMBER COLORS */
+    .num-contacted {{ color: #001f3f !important; font-family: 'Orbitron'; font-size: 6rem; line-height: 1; font-weight: 700; }}
+    .num-accepted {{ color: #007bff !important; font-family: 'Orbitron'; font-size: 6rem; line-height: 1; font-weight: 700; }}
+    .num-approved {{ color: #10b981 !important; font-family: 'Orbitron'; font-size: 6rem; line-height: 1; font-weight: 700; }}
+
+    /* DEPT SPECIFIC ADJUSTMENTS */
+    .dept-card h2 {{ font-size: 2.5rem; margin-bottom: 10px; }}
+    .dept-num {{ font-size: 3.5rem !important; }}
+    .stat-label {{ color: #4b5563 !important; font-weight: 700; font-size: 1.1rem; text-transform: uppercase; font-family: 'Montserrat'; }}
+    .dept-card hr {{ border: 1px solid #eee; margin: 15px 0; }}
 
     .motivation-text {{
         font-family: 'Montserrat', sans-serif;
@@ -170,17 +173,13 @@ with col_text:
         </div>
     """, unsafe_allow_html=True)
 
-# --- 4. DATA ENGINE (FIXED NUMBERS) ---
+# --- 4. DATA ENGINE ---
 try:
-    # Fetch and clean column names immediately
     raw_df = pd.read_csv(f"{CSV_URL}&t={time.time()}")
     raw_df.columns = [str(c).strip().lower() for c in raw_df.columns]
-    
-    # Clean the actual data inside the columns
     for col in raw_df.columns:
         raw_df[col] = raw_df[col].astype(str).str.strip()
 
-    # Define column references (change these if your Sheet names are very different)
     COL_DEPT = 'department'
     COL_STATUS = 'status'
     COL_NAME = 'ep name'
@@ -212,11 +211,11 @@ try:
     st.write("<br>", unsafe_allow_html=True)
     m1, m2, m3 = st.columns(3)
     with m1:
-        st.markdown(f'<div class="total-card"><h3>TOTAL CONTACTED</h3><h1 style="color:#1a1a1a !important;">{total_con}</h1></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="total-card"><h3>TOTAL CONTACTED</h3><p class="num-contacted">{total_con}</p></div>', unsafe_allow_html=True)
     with m2:
-        st.markdown(f'<div class="total-card"><h3>TOTAL ACCEPTED</h3><h1 style="color:#007bff !important;">{total_acc}</h1></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="total-card"><h3>TOTAL ACCEPTED</h3><p class="num-accepted">{total_acc}</p></div>', unsafe_allow_html=True)
     with m3:
-        st.markdown(f'<div class="total-card"><h3>TOTAL APPROVALS</h3><h1 style="color:#28a745 !important;">{total_app}</h1></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="total-card"><h3>TOTAL APPROVALS</h3><p class="num-approved">{total_app}</p></div>', unsafe_allow_html=True)
 
     # DEPARTMENT STANDINGS
     st.markdown("<br><h2 style='color:#ffffff; text-shadow: 0 0 10px #ffffff; text-align:center; font-family:Orbitron; font-size:3rem;'>DEPARTMENT STANDINGS</h2>", unsafe_allow_html=True)
@@ -233,19 +232,18 @@ try:
                     <h2>{d}</h2>
                     <hr>
                     <p class="stat-label">Approvals</p>
-                    <p class="stat-val" style="color:#28a745 !important;">{apps}</p>
+                    <p class="num-approved dept-num">{apps}</p>
                     <hr>
                     <p class="stat-label">Accepted</p>
-                    <p class="stat-val" style="color:#007bff !important;">{accs}</p>
+                    <p class="num-accepted dept-num">{accs}</p>
                     <hr>
                     <p class="stat-label">Contacted</p>
-                    <p class="stat-val" style="color:#1a1a1a !important;">{cons}</p>
+                    <p class="num-contacted dept-num">{cons}</p>
                 </div>
             """, unsafe_allow_html=True)
 
 except Exception as e:
     st.info(f"🛰️ RE-SYNCING COMMAND CENTER...")
-    # st.write(e) # Uncomment this if you need to see the exact error for debugging
 
 # --- 5. THE MEDINA TICKER ---
 st.write("<br><br>", unsafe_allow_html=True)
