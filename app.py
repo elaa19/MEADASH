@@ -12,7 +12,7 @@ st.set_page_config(page_title="MEDINA COMMAND CENTER", layout="wide", initial_si
 local_tz = pytz.timezone('Africa/Tunis')
 
 # Define target times in local timezone
-START_TIME = local_tz.localize(datetime(2026, 4, 3, 14:45, 0, 0))
+START_TIME = local_tz.localize(datetime(2026, 4, 3, 14,45, 0, 0))
 END_TIME = local_tz.localize(datetime(2026, 4, 3, 17, 0, 0))
 
 CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSecPqsX3fiOFwv9YnIU2-3EGTJeZx5wMxjoEZ2UYk-JJ8iRjgc-hXl5MRv3U5UWKCtzBIlhtqJUKsG/pub?gid=0&single=true&output=csv"
