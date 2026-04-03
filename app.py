@@ -7,8 +7,8 @@ from datetime import datetime
 # --- 1. CONFIG & SETTINGS ---
 st.set_page_config(page_title="MEDINA COMMAND CENTER", layout="wide", initial_sidebar_state="collapsed")
 
-START_TIME = datetime(2026, 4, 3, 15, 0, 0)
-END_TIME = datetime(2026, 4, 3, 18, 0, 0)
+START_TIME = datetime(2026, 4, 3, 14, 0, 0)
+END_TIME = datetime(2026, 4, 3, 17, 0, 0)
 CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSecPqsX3fiOFwv9YnIU2-3EGTJeZx5wMxjoEZ2UYk-JJ8iRjgc-hXl5MRv3U5UWKCtzBIlhtqJUKsG/pub?gid=0&single=true&output=csv"
 
 LOGO_URL = "logo.png" 
